@@ -1,26 +1,50 @@
-Function DownloadWebContent(strUrl As String) As String
-    Dim objHTTP As Object
-    Dim strContent As String
+Function DownloadWebContent(url As String) As String
+    Dim oDoc As Object
+    Dim oSheet As Object
+    Dim oAddress As Object
+    Dim i As Long
+    Dim result As String
+    Dim oRegExp As Object
 
-    ' Create the WinHttpRequest object
-    objHTTP = CreateUnoService("com.sun.star.xml.sax.Parser")
+    ' Get the current document and sheet
+    oDoc = ThisComponent
+    oSheet = oDoc.Sheets(0)
 
-    ' Open the URL
-    objHTTP.Open "GET", strUrl, False
+    ' Location for the data from the web page
+    oAddress = oSheet.getCellByPosition(0, 0).getCellAddress()
 
-    ' Send the request
-    objHTTP.send()
+    ' The HTML sections are named HTML_all, HTML_tables, HTML_1, HTML_2, HTML_3, etc.
+    oDoc.AreaLinks.insertAtPosition(oAddress, url, "HTML_tables", "calc_HTML_WebQuery", "0 0")
 
-    ' Get the response
-    strContent = objHTTP.responseText()
+    ' Wait for a moment to ensure the data is loaded
+    Wait 2000
 
-    ' Print the content to Immediate Window
-    Print strContent
+    ' Read the data from the first column of the sheet
+    result = ""
+    i = 0
+    Do While oSheet.getCellByPosition(0, i).String <> ""
+        result = result & oSheet.getCellByPosition(0, i).String & Chr(10)
+        i = i + 1
+    Loop
 
-    ' Clean up
-    objHTTP = Nothing
+    ' Following breaks the link, but leaves the data
+    oDoc.AreaLinks.removeByIndex(0)
 
-    DownloadWebContent = strContent
+    ' Create a regular expression object to remove HTML tags
+    oRegExp = CreateUnoService("com.sun.star.util.RegularExpression")
+    oRegExp.Pattern = "<[^>]*>"
+    oRegExp.ReplaceString = ""
+
+    ' Remove HTML tags from the result
+    result = oRegExp.replaceAll(result)
+
+    ' Clear the data from the sheet
+    For i = 0 To oSheet.Rows.Count - 1
+        oSheet.getCellByPosition(0, i).String = ""
+    Next i
+
+    ' Return the result
+    DownloadWebContent = result
 End Function
 
 Sub OpenFile()
