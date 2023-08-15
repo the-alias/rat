@@ -1,0 +1,2 @@
+$base64string = [Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\Users\User\Desktop\py\dist\rev_tcp.exe"))
+[IO.File]::WriteAllBytes("C:\Users\User\Desktop\py\x.exe", [Convert]::FromBase64String($base64string))
