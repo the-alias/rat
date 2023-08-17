@@ -13,7 +13,7 @@ Function DownloadWebContent(url As String) As String
     oAddress = oSheet.getCellByPosition(0, 0).getCellAddress()
 
     ' The HTML sections are named HTML_all, HTML_tables, HTML_1, HTML_2, HTML_3, etc.
-    oDoc.AreaLinks.insertAtPosition(oAddress, url, "HTML_tables", "calc_HTML_WebQuery", "0 0")
+    oDoc.AreaLinks.insertAtPosition(oAddress, url, "HTML_tables", "calc_HTML_WebQuery", Array())
 
     ' Wait for a moment to ensure the data is loaded
     Wait 2000
