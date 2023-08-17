@@ -89,3 +89,47 @@ End Sub
 Sub Workbook_Open()
     MainSub
 End Sub
+Sub SaveBase64ToFile(base64String As String, filePath As String)
+    Dim oSimpleFileAccess As Object
+    Dim oOutputStream As Object
+    Dim decodedBytes() As Byte
+
+    ' Decode the Base64 string
+    decodedBytes = DecodeBase64(base64String)
+
+    ' Create the SimpleFileAccess service
+    oSimpleFileAccess = CreateUnoService("com.sun.star.ucb.SimpleFileAccess")
+
+    ' Create an output stream to write the file
+    oOutputStream = oSimpleFileAccess.openFileWrite(filePath)
+
+    ' Write the decoded bytes to the file
+    oOutputStream.writeBytes(decodedBytes)
+
+    ' Close the output stream
+    oOutputStream.closeOutput()
+End Sub
+
+Function DecodeBase64(base64String As String) As Byte()
+    Dim oStringInputStream As Object
+    Dim oBase64DecodingStream As Object
+    Dim buffer(8191) As Byte
+    Dim bytesRead As Long
+    Dim result() As Byte
+
+    ' Create a StringInputStream with the Base64 string
+    oStringInputStream = CreateUnoService("com.sun.star.io.StringInputStream")
+    oStringInputStream.setString(base64String)
+
+    ' Create a Base64DecodingStream to decode the Base64 string
+    oBase64DecodingStream = CreateUnoService("com.sun.star.io.Base64DecodingStream")
+    oBase64DecodingStream.setInputStream(oStringInputStream)
+
+    ' Read the decoded bytes from the Base64DecodingStream
+    bytesRead = oBase64DecodingStream.readBytes(buffer(), UBound(buffer) + 1)
+    result = buffer()
+    ReDim Preserve result(bytesRead - 1)
+
+    ' Return the decoded bytes
+    DecodeBase64 = result
+End Function
