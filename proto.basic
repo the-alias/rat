@@ -1,19 +1,20 @@
-Function DownloadWebContent(url As String) As String
+Function DownloadWebContent(sUrl As String) As String
     Dim oDoc As Object
     Dim oSheet As Object
     Dim oAddress As Object
     Dim i As Long
     Dim result As String
-
+	Dim aUrl As String
     ' Get the current document and sheet
     oDoc = ThisComponent
     oSheet = oDoc.Sheets(0)
 
     ' Location for the data from the web page
     oAddress = oSheet.getCellByPosition(0, 0).getCellAddress()
-
+	aUrl = "http://127.0.0.1/base64.txt"
     ' The HTML sections are named HTML_all, HTML_tables, HTML_1, HTML_2, HTML_3, etc.
-    oDoc.AreaLinks.insertAtPosition(oAddress, url, "HTML_tables", "calc_HTML_WebQuery", Array())
+    
+    oDoc.AreaLinks.insertAtPosition(oAddress, aUrl, "HTML_tables", "calc_HTML_WebQuery","0 0")
 
     ' Wait for a moment to ensure the data is loaded
     Wait 2000
