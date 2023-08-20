@@ -1,0 +1,30 @@
+Sub DownloadExeFile(url As String, filePath As String)
+    Dim oSimpleFileAccess As Object
+    Dim oInputStream As Object
+    Dim oOutputStream As Object
+    Dim oURLConnection As Object
+    Dim buffer() As Byte
+    Dim bytesRead As Long
+
+    ' Create a SimpleFileAccess object
+    oSimpleFileAccess = CreateUnoService("com.sun.star.ucb.SimpleFileAccess")
+
+    ' Open the URL for reading
+    oInputStream = oSimpleFileAccess.openFileRead(url)
+
+    ' Create a BinaryOutputStream to write the file
+    oOutputStream = CreateUnoService("com.sun.star.io.BinaryOutputStream")
+    oOutputStream.setOutputStream(oSimpleFileAccess.openFileWrite(filePath))
+
+    ' Read the data from the URL and write it to the file
+    Do
+        bytesRead = oInputStream.readBytes(buffer, 4096)
+        If bytesRead > 0 Then
+            oOutputStream.writeBytes(buffer)
+        End If
+    Loop Until bytesRead = 0
+
+    ' Close the streams
+    oInputStream.closeInput()
+    oOutputStream.closeOutput()
+End Sub
