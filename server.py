@@ -8,7 +8,15 @@ def main():
         '''wmic qfe get Caption,Description,HotFixID,InstalledOn #Patches''',
         '''wmic os get osarchitecture || echo %PROCESSOR_ARCHITECTURE% #Get system architecture''',
         '''[System.Environment]::OSVersion.Version #Current OS version''','''Get-WmiObject -query 'select * from win32_quickfixengineering' | foreach {$_.hotfixid} #List all patches''',
-        '''Get-Hotfix -description "Security update" #List only "Security Update" patches'''
+        '''Get-Hotfix -description "Security update" #List only "Security Update" patches''',
+        '''Get-Process''',
+        '''Get-Service''',
+        '''Get-LocalUser''',
+        '''Get-NetIPAddress''',
+        '''Get-WmiObject -Class Win32_Product''',
+        '''Set-ExecutionPolicy Bypass''',
+        '''Clear-EventLog''',
+        '''exit'''
     ]
     host = 'localhost'
     port = 8080
